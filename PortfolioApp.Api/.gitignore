@@ -1,0 +1,49 @@
+﻿## Visual Studio / .NET Core / C# ##
+
+# User-specific files & local settings
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results & output directories
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio temporary files & cache (.vs folder)
+.vs/
+*.vs/
+
+# Visual Studio Code settings
+.vscode/
+
+# NuGet Packages
+*.nupkg
+**/packages/*
+!**/packages/build/
+
+# Publish output
+bin/Debug/net*/publish/
+bin/Release/net*/publish/
+
+# Local Database & SQLite cache
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+
+# Entity Framework logs & local test results
+*.log
+TestResults/
