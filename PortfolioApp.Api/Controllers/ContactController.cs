@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PortfolioApi.Services;
 using PortfolioApp.Api.Model;
 
 namespace PortfolioApi.Controllers;
