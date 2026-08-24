@@ -21,12 +21,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddTransient<EmailService>();
 
 // CORS
-builder.Services.AddCors(options => {
-    options.AddPolicy("AllowAngular", policy => {
-        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp",
+        policy => policy.WithOrigins("https://your-app.vercel.app")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
 });
 
 var app = builder.Build();
@@ -48,7 +48,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseCors("AllowAngular");
+app.UseCors("AllowAngularApp");
 
 if (app.Environment.IsDevelopment())
 {
