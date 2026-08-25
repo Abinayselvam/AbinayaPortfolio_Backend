@@ -21,14 +21,20 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Email Service
 builder.Services.AddTransient<EmailService>();
 
-// CORS
+// Add CORS Policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngularApp",
-        policy => policy
-            .WithOrigins("https://your-app.vercel.app")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
+    options.AddPolicy("AllowVercelFrontend",
+        policy =>
+        {
+            policy.WithOrigins(
+                    "https://abinaya-portfolio-git-main-portfolio-project8.vercel.app",
+                    "https://abinaya-portfolio-ez1miwc22-portfolio-project8.vercel.app",
+                    "http://localhost:4200" // For local testing
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
 });
 
 var app = builder.Build();
@@ -103,7 +109,7 @@ using (var scope = app.Services.CreateScope())
 
 
 // CORS
-app.UseCors("AllowAngularApp");
+app.UseCors("AllowVercelFrontend");
 
 
 // Swagger
