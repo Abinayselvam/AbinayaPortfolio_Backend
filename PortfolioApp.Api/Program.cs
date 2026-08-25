@@ -24,17 +24,17 @@ builder.Services.AddTransient<EmailService>();
 // Add CORS Policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowVercelFrontend",
-        policy =>
-        {
-            policy.WithOrigins(
-                    "https://abinaya-portfolio-git-main-portfolio-project8.vercel.app",
-                    "https://abinaya-portfolio-ez1miwc22-portfolio-project8.vercel.app",
-                    "http://localhost:4200" // For local testing
-                )
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowVercelFrontend", policy =>
+    {
+        policy.WithOrigins(
+                "https://portfolio-frontend-git-develop-portfolio-project8.vercel.app", // Added your active Vercel domain
+                "https://abinaya-portfolio-git-main-portfolio-project8.vercel.app",
+                "https://abinaya-portfolio-ez1miwc22-portfolio-project8.vercel.app",
+                "http://localhost:4200"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
 });
 
 var app = builder.Build();
