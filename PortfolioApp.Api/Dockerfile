@@ -1,12 +1,13 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy csproj and restore dependencies
-COPY *.csproj ./
-RUN dotnet restore
+# Copy the csproj file directly from your subfolder
+COPY PortfolioApp.Api/*.csproj ./PortfolioApp.Api/
+RUN dotnet restore PortfolioApp.Api/*.csproj
 
-# Copy remaining project files and publish
+# Copy the rest of the files and build
 COPY . ./
+WORKDIR /src/PortfolioApp.Api
 RUN dotnet publish -c Release -o /app/out
 
 # Build runtime image
