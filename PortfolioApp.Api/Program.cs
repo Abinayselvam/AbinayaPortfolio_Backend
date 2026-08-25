@@ -21,17 +21,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Email Service
 builder.Services.AddTransient<EmailService>();
 
-// Add CORS Policy
+// Dynamic CORS Policy for Vercel & Localhost
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowVercelFrontend", policy =>
     {
-        policy.WithOrigins(
-                "https://portfolio-frontend-git-develop-portfolio-project8.vercel.app", // Added your active Vercel domain
-                "https://abinaya-portfolio-git-main-portfolio-project8.vercel.app",
-                "https://abinaya-portfolio-ez1miwc22-portfolio-project8.vercel.app",
-                "http://localhost:4200"
-            )
+        policy.SetIsOriginAllowed(origin =>
+                string.IsNullOrEmpty(origin) ||
+                new Uri(origin).Host.EndsWith("vercel.app") ||
+                origin.StartsWith("http://localhost"))
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -41,8 +39,9 @@ var app = builder.Build();
 
 
 // ============================================================
-// DATABASE MIGRATION + SEED DATA
+// DATABASE MIGRATION + SEED DATA (Disabled to prevent Linux LocalDB crashes)
 // ============================================================
+/*
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -52,7 +51,7 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<AppDbContext>();
 
         // Apply pending EF Core migrations
-        //context.Database.Migrate();
+        // context.Database.Migrate();
 
         // Seed initial project data
         if (!context.Projects.Any())
@@ -68,7 +67,6 @@ using (var scope = app.Services.CreateScope())
                     GithubUrl = "#",
                     Featured = true
                 },
-
                 new PortfolioApp.Api.Model.ProjectEntity
                 {
                     Title = "Real-Time Chat",
@@ -78,7 +76,6 @@ using (var scope = app.Services.CreateScope())
                     GithubUrl = "#",
                     Featured = true
                 },
-
                 new PortfolioApp.Api.Model.ProjectEntity
                 {
                     Title = "Portfolio CMS",
@@ -96,21 +93,13 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-
-        logger.LogError(
-            ex,
-            "Database migration or seed operation failed."
-        );
-
-        // Do NOT stop the application.
-        // The API can still start, and the error will be visible in logs.
+        logger.LogError(ex, "Database migration or seed operation failed.");
     }
 }
+*/
 
-
-// CORS
+// Enable CORS Middleware
 app.UseCors("AllowVercelFrontend");
-
 
 // Swagger
 if (app.Environment.IsDevelopment())
@@ -118,7 +107,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 
 // Middleware
 app.UseHttpsRedirection();
