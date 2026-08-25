@@ -19,7 +19,24 @@ public class ContactController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        await _emailService.SendContactEmailAsync(request);
-        return Ok(new { success = true, message = "Message sent successfully! I'll get back to you within 24 hours." });
+        try
+        {
+            // Set a strict 10-second cancellation token so SMTP doesn't hang forever
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+
+            await _emailService.SendContactEmailAsync(request);
+
+            return Ok(new { success = true, message = "Message sent successfully!" });
+        }
+        catch (Exception ex)
+        {
+            // Return 500 error immediately if SMTP fails or times out
+            return StatusCode(500, new
+            {
+                success = false,
+                message = "Failed to send email. Check SMTP settings.",
+                error = ex.Message
+            });
+        }
     }
 }
