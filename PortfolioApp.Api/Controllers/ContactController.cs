@@ -19,31 +19,29 @@ public class ContactController : ControllerBase
     [HttpPost("send")]
     public async Task<IActionResult> SendEmail([FromBody] ContactDto request)
     {
-        _logger.LogInformation("Received contact form submission for {Email}", request?.Email);
-
         if (request == null || !ModelState.IsValid)
         {
-            return BadRequest(new { success = false, message = "Invalid form data submitted." });
+            return BadRequest(new { success = false, message = "Invalid form payload." });
         }
 
         try
         {
-            // Give SMTP a strict 8-second timeout window so the API request doesn't hang indefinitely
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
-
-            await _emailService.SendContactEmailAsync(request);
-
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            await _emailService.SendContactEmailAsync(request, cts.Token);
             return Ok(new { success = true, message = "Message sent successfully!" });
-        }
-        catch (TaskCanceledException)
-        {
-            _logger.LogError("SMTP timed out when trying to send email.");
-            return StatusCode(500, new { success = false, message = "Email service timed out. Please try again later." });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send email.");
-            return StatusCode(500, new { success = false, message = "Email failed to send.", details = ex.Message });
+            _logger.LogError(ex, "Contact form email sending failed.");
+
+            // Returns the EXACT exception message directly to your browser for immediate debugging
+            return StatusCode(500, new
+            {
+                success = false,
+                message = ex.Message,
+                innerError = ex.InnerException?.Message,
+                type = ex.GetType().Name
+            });
         }
     }
 }
